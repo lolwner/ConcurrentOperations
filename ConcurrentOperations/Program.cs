@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ConcurrentOperations
 {
@@ -6,7 +7,25 @@ namespace ConcurrentOperations
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Stopwatch asynchronousTimer = new Stopwatch();
+            asynchronousTimer.Start();
+            AsynchronousExecution.AsynchronousRunWhenAll();
+            asynchronousTimer.Stop();
+            Console.WriteLine($"Asynchronous call took {asynchronousTimer.Elapsed.TotalMilliseconds} ms");
+
+            Stopwatch parallelTimer = new Stopwatch();
+            parallelTimer.Start();
+            ParallelExecution.ParallelRunInvoke();
+            parallelTimer.Stop();
+            Console.WriteLine($"Parallel call took {parallelTimer.Elapsed.TotalMilliseconds} ms");
+
+            Stopwatch threadTimer = new Stopwatch();
+            threadTimer.Start();
+            ThreadExecution.ThreadPoolRun();
+            threadTimer.Stop();
+            Console.WriteLine($"Thread call took {threadTimer.Elapsed.TotalMilliseconds} ms");
+
+            Console.ReadKey();
         }
     }
 }
