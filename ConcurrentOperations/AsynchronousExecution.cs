@@ -12,7 +12,7 @@ namespace ConcurrentOperations
             tasks.Add(Run());
             tasks.Add(Run());
             tasks.Add(Run());
-            await Task.WhenAll(tasks.ToArray());
+            Task.Run(() => Task.WhenAll(tasks.ToArray()));
         }
 
         private static async Task Run()

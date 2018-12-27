@@ -19,11 +19,9 @@ namespace ConcurrentOperations
             parallelTimer.Stop();
             Console.WriteLine($"Parallel call took {parallelTimer.Elapsed.TotalMilliseconds} ms");
 
-            Stopwatch threadTimer = new Stopwatch();
-            threadTimer.Start();
+
             ThreadExecution.ThreadPoolRun();
-            threadTimer.Stop();
-            Console.WriteLine($"Thread call took {threadTimer.Elapsed.TotalMilliseconds} ms");
+
 
             Console.ReadKey();
         }
