@@ -1,40 +1,40 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Security.Permissions;
 
 namespace ConcurrentOperations
 {
     public static class ThreadExecution
     {
         public static double elapsedTimeInMs;
-        private static Stopwatch threadTimer;
-
-        static ThreadExecution()
-        {
-            threadTimer = new Stopwatch();
-        }
 
         public static void ThreadPoolRun()
         {
+            WaitHandle[] waitHandles = new WaitHandle[]
+            {
+                new AutoResetEvent(false),
+                new AutoResetEvent(false),
+                new AutoResetEvent(false)
+            };
+            var threadTimer = new Stopwatch();
+            threadTimer.Start();
             for (int i = 0; i < 3; i++)
             {
-                ThreadPool.QueueUserWorkItem(Run);
+                ThreadPool.QueueUserWorkItem(new WaitCallback(Run), waitHandles[i]);
             }
+            WaitHandle.WaitAll(waitHandles);
+            threadTimer.Stop();
+
+            Console.WriteLine($"Finished from ThreadExecution2 took {threadTimer.Elapsed.TotalMilliseconds} ms");
         }
 
         private static void Run(object state)
         {
-            if (threadTimer.IsRunning)
-            {
-                threadTimer.Stop();
-            }
-
-            threadTimer.Start();
             int[] resultingArray = ArrayLookUp.LoopThrough();
-            threadTimer.Stop();
-            elapsedTimeInMs = elapsedTimeInMs + threadTimer.Elapsed.TotalMilliseconds;
-            Console.WriteLine($"Finished from ThreadExecution took {elapsedTimeInMs} ms");
-            
+            Console.WriteLine($"Finished from ThreadExecution");
+            AutoResetEvent waitHandle = (AutoResetEvent)state;
+            waitHandle.Set();
         }
     }
 }
